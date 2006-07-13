@@ -1,0 +1,296 @@
+$HeadURL$
+$LastChangedRevision$
+$LastChangedDate$
+$LastChangedBy$
+
+
+
+Contents
+========
+
+1. WARNING!
+2. Webauth Java
+3. Requirements
+4. Configuration
+5. JAAS
+
+
+
+1. WARNING!
+===========
+
+This is still experimental and relatively untested software. If you use this
+software for any production services you do so at your own risk! If it breaks
+you will be left on your own to pick up the pieces!
+
+
+
+2. Webauth Java
+===============
+
+This is a Java Servlet 2.3 implementation of the University of Stanford WebAuth
+protocol, as documented here: http://webauth.stanford.edu/
+Specifically it implements a subset of the mod_webauth Apache2 module
+functionality. It is recommended that people wanting to use Webauth Java should
+first install mod_webauth for Apache2 and get that working, to ensure that they
+definitely have a working setup. The keytab, keyring and many of the
+configuration options for Webauth Java are then the same.
+
+This code was written as part of the SPIE project (http://spie.oucs.ox.ac.uk/)
+at the Oxford University Computing Services department, University of Oxford,
+UK. The source is licensed under the LGPL license, and (C) University of
+Oxford. Redistributed libraries retain their own copyright and licenses.
+
+The library implements a Servlet 2.3 Filter that ensures that no client will be
+let through to a protected location without having a valid Webauth cookie. After
+a user has been authenticated and is passed through to the target location their
+username can be retrieved by using the HttpServletRequest.getRemoteUser()
+method. The filter can also be configured to support JAAS authentication.
+
+Any questions, feature requests, bugs, patches, or comments can be sent to the
+main author Mats Henrikson at mats@sysdev.oucs.ox.ac.uk.
+
+
+
+3. Requirements
+===============
+
+1. Currently the library has been tested with Tomcat 4.1 and 5.5. If anybody
+finds that it does or does not work with any other container please let me know.
+
+
+2. The JAAS LoginModule depends on the container using the same single thread to
+run from the start of a filter chain to the end of it. If this is not the case
+then JAAS will not work. This does however seem to be the case, at least with
+the versions of Tomcat it has been tested with. If you have a more elegant
+solution then please let me know.
+
+
+3. The ServletRequest/Response objects passed to the main doFilter() method
+of the uk.ac.ox.webauth.Filter class must actually be
+HttpServletRequest/Response objects, as otherwise it is impossible to redirect
+the client browser. This is the case with the versions of Tomcat I have tested
+it with, and I've seen others do it this way. If you know of another more
+elegant way of redirecting a client let me know.
+
+
+4. The code depends on the following libraries:
+
+  Bouncy Castle Provider for J2SE5 1.32
+  Jakarta Commons Codec 1.3
+  Jakarta Commons HttpClient 3.0
+  Jakarta Commons Logging API 1.0.4
+  Jakarta Commons Logging 1.0.4
+  Servlet 2.3
+
+Version numbers given are what was used at development time, other versions may
+or may not work. These libraries are currently included in both the source and
+binary distribution, as are their licenses.
+
+
+5. At the moment the only Kerberos encryption type supported is
+des3-cbc-sha1-kd. There is a partial des-cbc-crc decryption type included, but
+it has been disabled as it is not complete. Turning it into a des-cbc-md4/5
+should be pretty simple though, as it's only the checksum that is different.
+
+It is quite simple to implement others. To do so have a look at the public
+methods in these files in the source distribution:
+
+src/uk/ac/ox/webauth/crypto/EType.java
+src/uk/ac/ox/webauth/crypto/Des3CbcSha1Kd.java
+src/uk/ac/ox/webauth/asn1/EncryptedData.java
+
+If you do implement other encryption types then please submit them to me and
+I'll include them in a future release.
+
+
+6. Currently the library depends on a Java 1.5 implementation, as it uses 1.5
+version features such as generics and the new foreach loop, etc. However, this
+does not have to be a Sun Microsystems implementation as long as it supports
+all the 1.5 features used.
+
+
+
+4. Recommendations
+==================
+
+It is recommended to deploy the jar in a location where it will be loaded by a
+classloader that ensures that static instances of objects will be the same
+instance across all webapps using the library. It should still work if this is
+not possible, but it will use much more resources since each filter will use
+private instances of everything and not be able to share anything with the other
+configured filters. In Tomcat that means that the common/lib directory is the
+best place to put the library and dependencies.
+
+
+
+5. Configuration
+================
+
+There are two ways to configure a Webauth Java filter. The filter can take init
+parameters either from the servlet container as specified in the web.xml file,
+or it can load a properties file. It is highly recommended that a configuration
+file is used, and that the same configuration file is used for all filters with
+the common settings specified in it.
+
+If a properties file is used then any init parameters given by the servlet
+container will override the ones specified in the properties file. This makes it
+possible to have for example one common config file for multiple filters, but
+have only one of the filters in debug mode.
+
+Such a situation would have something like the following init parameters
+specified in the application web.xml:
+
+  <filter>
+    <filter-name>Webauth Filter</filter-name>
+    <filter-class>uk.ac.ox.webauth.Filter</filter-class>
+    <init-param>
+      <param-name>ConfigFile</param-name>
+      <param-value>/etc/tomcat/webauth.properties</param-value>
+    </init-param>
+    <init-param>
+      <param-name>WebAuthDebug</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>Webauth Filter</filter-name>
+    <servlet-name>ServletToProtect</servlet-name>
+  </filter-mapping>
+  
+And the properties file found at /etc/tomcat/webauth.properties might look
+something like this:
+
+#WebAuthDebug=true
+WebAuthServicePrincipal=webauth/server.institution.ac.uk
+WebAuthKeytab=/usr/tomcat/conf/krb5.keytab
+WebAuthWebKdcPrincipal=service/webkdc@INSTITUTION.AC.UK
+WebAuthWebKdcURL=https://webauth.institution.ac.uk/webkdc-service/
+WebAuthLoginURL=https://webauth.institution.ac.uk/login
+WebAuthKeyring=/etc/apache2/webauth/keyring
+AutoAddKeys=true
+AutoRemoveKeys=true
+AddFakeTGT=true
+UseJAAS=true
+
+Currently, the Webauth Java filter only understands the following parameters:
+
+AddFakeTGT              (default false)
+    The Sun Java 1.5 implementation is currently a bit broken. Currently it will
+    always look for a TGT before checking if the correct service ticket for a
+    service is already stashed in the subject, and if it doesn't find the TGT
+    it throws an exception, even if the service ticket it needs is already
+    present in the subject. Setting AddFakeTGT to true will make the Webauth
+    Java library take a copy of one of the service tickets and put it in the
+    subject with a service principal like
+    krbtgt/INSTITUTION.AC.UK@INSTITUTION.AC.UK. Once the Kerberos parts of
+    Java finds that it will then use the correct service ticket and ignore the
+    TGT.
+    
+AutoAddKeys             (default false)
+    Adds a new key to the keyring once the newest key is 30 days old.
+
+    Note: The keyring set with WebAuthKeyring must be created by you. This is
+    because java can not set restrictive enough permissions on files. Please
+    create the file with permissions such that only the user that your
+    container runs as has read and write access to it, no other user should
+    have any access!
+    
+AutoRemoveKeys          (default false)
+    Removes keys in the private keyring that are older than 90 days.
+
+    Note: The keyring set with WebAuthKeyring must be created by you. This is
+    because java can not set restrictive enough permissions on files. Please
+    create the file with permissions such that only the user that your
+    container runs as has read and write access to it, no other user should
+    have any access!
+
+ConfigFile              (default none)
+    This tells the filter what Properties file to load with common settings for
+    all Webauth Java filters. Any properties set in the file can be overridden
+    with specific init parameters given to the filter by the container.
+
+ProxyCredentials        (default none)
+    This works similar to the mod_webauth WebAuthCred directive, but since it
+    wasn't an exact fit a new directive name was used for the Webauth Java
+    filter. A comma separated list (with possible whitespace) of the credential
+    type and service to acquire proxy credentials for, e.g.:
+
+    <init-param>
+      <param-name>ProxyCredentials</param-name>
+      <param-value>
+        krb5 service/foo.institution.ac.uk@INSTITUTION.AC.UK,
+        krb5 service/bar.institution.ac.uk@INSTITUTION.AC.UK
+      </param-value>
+    </init-param>
+    
+    Since the list is comma separated the service principals given can not
+    contain any commas. The extra credentials are placed in the JAAS Subject. If
+    JAAS is not enabled then no extra credentials will be obtained. The Subject
+    will *only* have the extra credentials in the list, if the browser has other
+    credential tokens in cookies already they will be ignored.
+    
+UseJAAS                 (default false)
+    This must be set to true if JAAS is used to authenticate the user, or
+    obtaining proxy credentials. Please make sure the read the JAAS section
+    further down in this document.
+
+The following options do the same as for mod_webauth, please read the
+documentation at http://webauth.stanford.edu/manual/mod/mod_webauth.html to find
+more information on them. Note that true/false must be used with Webauth Java
+where mod_webauth expects on/off.
+
+WebAuthDebug                    (default false)
+WebAuthExtraRedirect            (default false)
+WebAuthKeyring                  (required)
+WebAuthKeytab                   (required)
+WebAuthLoginURL                 (required)
+WebAuthServicePrincipal         (required)
+WebAuthSubjectAuthType          (default "webkdc")
+WebAuthWebKdcPrincipal          (required)
+WebAuthWebKdcURL                (required)
+
+Note: The keyring set with WebAuthKeyring must be created by you. This is
+because java can not set restrictive enough permissions on files. Please create
+the file with permissions such that only the user that your container runs as
+has read and write access to it, no other user should have any access!
+
+Also make sure that if you are using mod_webauth or another container with
+Webauth Java configured that only one out of all the services sharing the same
+keyring actually updates it.
+
+
+
+6. JAAS
+=======
+
+JAAS is best avoided, unless it is important to have a fully configured Subject
+to use for things like Kerberos proxy ticket login to GSSAPI services etc., as
+it adds unnecessary overhead if the features it brings are not actually
+necessary. If you need to know a user is authenticated then checking that
+HttpServletRequest.getRemoteUser()/.getAuthType() returns a username and the
+authentication type "WebAuth" is enough.
+
+If you must use JAAS then something similar to the following JAAS configuration
+fragment should be used:
+
+Webauth {
+    uk.ac.ox.webauth.JaasLoginModule Required;
+};
+
+No callback handlers are needed, simply ensure that the Webauth Java servlet
+filter is protecting the location you are doing your JAAS login at and then
+instantiate a LoginContext for the authentication type (in the example config
+above that would be "Webauth") and use the login() method. If everything went ok
+then get the Subject from the LoginContext, this will have all the principals
+and credentials configured for that location.
+
+Once the subject has all the credentials in it it is no longer necessary to run
+all the code under a protected location. If the protected location is used to
+save the subject in for instance the session, then it is possible to use the
+Kerberos credentials under any location, Webauth Java protected or not.
+
+Please also look at the AddFakeTGT configuration option, it is in most cases
+necessary to have that set to true when using JAAS and Kerberos proxy tickets.
+

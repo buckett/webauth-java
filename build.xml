@@ -1,0 +1,322 @@
+<?xml version="1.0"?>
+<!--
+ Webauth Java - Java implementation of the University of Stanford WebAuth
+ protocol.
+
+ Copyright (C) 2006 University of Oxford
+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+-->
+
+<!--
+  Ant build file for the Webauth Java library.
+  
+  $HeadURL$
+  $LastChangedRevision$
+  $LastChangedDate$
+  $LastChangedBy$
+-->
+
+<project name="Webauth Java" default="compile" basedir=".">
+
+
+  <property file="build.properties"/>
+
+  
+  <!-- NOTE: make sure to set this in a build.properties file. -->
+  <property name="deploy.dir" value="Set this in a build.properties file!"/>
+
+ 
+  <!-- Special variables that are important. -->
+  <property name="app.version" value="1.1"/>
+  <property name="app.name" value="Webauth Java"/>
+  <property name="app.filename" value="webauth-java-${app.version}"/>
+  <property name="app.jar" value="${app.filename}.jar"/>
+  <property name="build.dir" value="build"/>
+  <property name="docs.dir" value="docs"/>
+  <property name="lib.dir" value="lib"/>
+  <property name="src.dir" value="src"/>
+  <property name="dist.dir" value="dist"/>
+  <property name="dist.bin.jar" value="${app.filename}-bin.jar"/>
+  <property name="dist.src.jar" value="${app.filename}-src.jar"/>
+  <property name="compile.source" value="1.5"/>
+  <property name="compile.target" value="1.5"/>
+  <property name="compile.optimize" value="true"/>
+  <property name="compile.debug" value="true"/>
+  <property name="compile.deprecation" value="true"/>
+
+  
+  <!-- library paths -->
+  <fileset id="libs.deploy" dir="${lib.dir}">
+    <include name="bcprov-jdk15-132.jar"/>
+    <include name="commons-codec-1.3.jar"/>
+    <include name="commons-httpclient-3.0.jar"/>
+    <include name="commons-logging-1.0.4.jar"/>
+    <include name="commons-logging-api-1.0.4.jar"/>
+  </fileset>
+  <fileset id="libs.compile" dir="${lib.dir}">
+    <include name="servlet-2.3-api.jar"/>
+  </fileset>
+  
+  <!-- library licenses -->
+  <fileset id="licenses" dir="${lib.dir}">
+    <include name="*LICENSE"/>
+    <exclude name="servlet-2.3-api-LICENSE"/>
+  </fileset>
+  
+  <!-- the application jars -->
+  <fileset id="app.jars" dir="${dist.dir}">
+    <include name="${app.jar}"/>
+  </fileset>
+ 
+
+  <!-- ===================================================================== -->
+  <!-- TARGETS, sorted alphabetically                                        -->
+  <!-- ===================================================================== -->
+
+  <!-- CLEAN -->
+  <target name="clean" description="Delete build, docs and dist directories.">
+    <delete dir="${build.dir}"/>
+    <delete dir="${docs.dir}"/>
+    <delete dir="${dist.dir}"/>
+  </target>
+
+
+  <!-- COMPILE -->
+  <target name="compile"
+          description="Compile all Java source.">
+    <mkdir dir="${build.dir}"/>
+    <javac srcdir="${src.dir}"
+           destdir="${build.dir}"
+           debug="${compile.debug}"
+           optimize="${compile.optimize}"
+           deprecation="${compile.deprecation}"
+           source="${compile.source}"
+           target="${compile.target}">
+      <compilerarg value="-Xlint"/>
+      <classpath>
+        <fileset refid="libs.deploy"/>
+        <fileset refid="libs.compile"/>
+      </classpath>
+    </javac>
+  </target>
+  
+
+  <!-- DECODE_TOKEN -->
+  <!-- takes the following params:
+    -Dtoken={base64-data}
+    -Dkey={hex-key}
+  -->
+  <target name="decode_token" depends="jar"
+    description="Decode a given token.">
+    <java fork="true"
+      classname="uk.ac.ox.webauth.Token">
+      <classpath>
+        <fileset refid="app.jars"/>
+        <fileset refid="libs.deploy"/>
+        <fileset refid="libs.compile"/>
+      </classpath>
+      <arg value="${token}"/>
+      <arg value="${key}"/>
+    </java>
+  </target>
+
+
+  <!-- DEPLOY -->
+  <target name="deploy"
+          depends="jar"
+          description="Deploy library to Tomcat container">
+    <!-- Copy application JAR file and deps -->
+    <copy todir="${deploy.dir}">
+      <fileset refid="app.jars"/>
+      <fileset refid="libs.deploy"/>
+    </copy>
+  </target>
+
+
+  <!-- DIST -->
+  <target name="dist"
+          depends="dist-src,dist-bin"
+          description="Create distribution jars">
+  </target>
+
+
+  <!-- DIST-BIN -->
+  <target name="dist-bin"
+          depends="jar"
+          description="Create binary distribution">
+    <jar jarfile="${dist.dir}/${dist.bin.jar}">
+      <fileset dir="lib" excludes="servlet*"/>
+      <fileset file="${dist.dir}/${app.jar}"/>
+      <fileset file="LICENSE"/>
+      <fileset file="README.Webauth"/>
+    </jar>
+  </target>
+
+
+  <!-- DIST-SRC -->
+  <target name="dist-src"
+          description="Create src distribution">
+    <mkdir dir="${dist.dir}/tmp/${app.filename}"/>
+    <copy todir="${dist.dir}/tmp/${app.filename}/${lib.dir}">
+      <fileset dir="${lib.dir}"/>
+    </copy>
+    <copy todir="${dist.dir}/tmp/${app.filename}/${src.dir}">
+      <fileset dir="${src.dir}"/>
+    </copy>
+    <copy todir="${dist.dir}/tmp/${app.filename}">
+      <fileset file="build.xml"/>
+      <fileset file="LICENSE"/>
+      <fileset file="README.Webauth"/>
+    </copy>
+    <jar jarfile="${dist.dir}/${dist.src.jar}"
+         basedir="${dist.dir}/tmp"/>
+    <delete dir="${dist.dir}/tmp"/>
+  </target>
+
+
+  <!-- JAR -->
+  <target name="jar"
+          depends="compile"
+          description="Create library">
+    <mkdir dir="${dist.dir}"/>
+    <!-- Create application JAR file -->
+    <jar jarfile="${dist.dir}/${app.jar}"
+         basedir="${build.dir}"/>
+  </target>
+
+
+  <!-- JAVADOC -->
+  <target name="javadoc" description="Create Javadoc API documentation">
+    <mkdir dir="${docs.dir}/api"/>
+    <javadoc packagenames="uk.ac.ox.*"
+             sourcepath="${src.dir}"
+             destdir="${docs.dir}/api"
+             author="true"
+             version="true"
+             windowtitle="${app.name} ${app.version} API Documentation">
+      <classpath>
+        <fileset refid="libs.deploy"/>
+        <fileset refid="libs.compile"/>
+      </classpath>
+      <doctitle><![CDATA[${app.name} ${app.version}<br/>API Documentation]]></doctitle>
+      <header><![CDATA[${app.name} ${app.version}<br/>API Documentation]]></header>
+      <bottom><![CDATA[<i>Copyright &#169; 2004 University of Oxford.</i>]]></bottom>
+    </javadoc>
+  </target>
+
+
+  <!-- PRINT_KEYRING -->
+  <!-- takes the following params:
+    -Dkeyring=/path/to/keyring
+  -->
+  <target name="print_keyring" depends="jar"
+    description="Print out some info about a keyring.">
+    <java fork="true"
+      classname="uk.ac.ox.webauth.PrivateKeyManager">
+      <classpath>
+        <fileset refid="app.jars"/>
+        <fileset refid="libs.deploy"/>
+        <fileset refid="libs.compile"/>
+      </classpath>
+      <arg value="${keyring}"/>
+    </java>
+  </target>
+
+
+  <!-- TEST-DES_CBC_CRC -->
+  <target name="test-des_cbc_crc" depends="jar"
+    description="Test the des-cbc-crc encryption type.">
+    <java fork="true"
+      classname="uk.ac.ox.webauth.crypto.DesCbcCrc">
+      <classpath>
+        <fileset refid="app.jars"/>
+        <fileset refid="libs.deploy"/>
+      </classpath>
+    </java>
+  </target>
+
+
+  <!-- TEST-DES3_CBC_SHA1_KD -->
+  <target name="test-des3_cbc_sha1_kd" depends="jar"
+    description="Test the des3-cbc-sha1-kd encryption type.">
+    <java fork="true"
+      classname="uk.ac.ox.webauth.crypto.Des3CbcSha1Kd">
+      <classpath>
+        <fileset refid="app.jars"/>
+        <fileset refid="libs.deploy"/>
+      </classpath>
+    </java>
+  </target>
+
+
+  <!-- TEST-KEYTAB -->
+  <!-- takes the following params:
+    -Dcredential.name=foo/bar
+    -Dkeytab.file=my.keytab
+  -->
+  <target name="test-keytab" depends="jar"
+    description="Test loading credentials from a keytab.">
+    <java fork="true"
+      classname="uk.ac.ox.webauth.KeytabKeyLoader">
+      <classpath>
+        <fileset refid="app.jars"/>
+      </classpath>
+      <jvmarg value="-Dsun.security.krb5.debug=${sun.security.krb5.debug}"/>
+      <arg value="${credential.name}"/>
+      <arg value="${keytab.file}"/>
+    </java>
+  </target>
+
+
+  <!-- TEST-TOKEN -->
+  <target name="test-token" depends="jar"
+    description="Test encrypting and decrypting a token.">
+    <java fork="true"
+      classname="uk.ac.ox.webauth.Token">
+      <classpath>
+        <fileset refid="app.jars"/>
+        <fileset refid="libs.deploy"/>
+        <fileset refid="libs.compile"/>
+      </classpath>
+    </java>
+  </target>
+
+
+  <!-- TEST-WEBAUTH_GET_TOKENS_REQUEST -->
+  <!-- takes the following params:
+    -Dcredential.name=foo/bar
+    -Dkeytab.file=my.keytab
+    -Dservice.princ=service/webkdc@INSTITUTION.AC.UK
+    -Dwebkdc.token.request.url=https://foo.fuu/webkdc-service/
+  -->
+  <target name="test-webauth_get_tokens_request" depends="jar"
+    description="Test authenticating to the WebKDC.">
+    <java fork="true"
+      classname="uk.ac.ox.webauth.WebauthGetTokensRequest">
+      <classpath>
+        <fileset refid="app.jars"/>
+        <fileset refid="libs.deploy"/>
+      </classpath>
+      <jvmarg value="-Dsun.security.krb5.debug=${sun.security.krb5.debug}"/>
+      <arg value="${credential.name}"/>
+      <arg value="${keytab.file}"/>
+      <arg value="${service.princ}"/>
+      <arg value="${webkdc.token.request.url}"/>
+    </java>
+  </target>
+
+
+</project>

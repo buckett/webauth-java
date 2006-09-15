@@ -107,8 +107,8 @@ public class Des3CbcSha1Kd extends EType {
         // check the HMAC
         byte[] newChecksum = hmacSHA1.doFinal(decrypted);
         if(!Arrays.equals(checksum, newChecksum)) {
-            //throw new GeneralSecurityException("Checksum failure.");
-            System.out.println("Checksum failed.");
+            throw new GeneralSecurityException("Checksum failure.");
+            //System.out.println("Checksum failed.");
         }
         
         // throw away the confounder and then return an ASN.1 encodable object

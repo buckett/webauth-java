@@ -11,8 +11,10 @@ Contents
 1. WARNING!
 2. Webauth Java
 3. Requirements
-4. Configuration
-5. JAAS
+4. Recommendations
+5. Configuration
+6. JAAS
+7. Changelog
 
 
 
@@ -55,18 +57,18 @@ main author Mats Henrikson at mats@sysdev.oucs.ox.ac.uk.
 3. Requirements
 ===============
 
-1. Currently the library has been tested with Tomcat 4.1 and 5.5. If anybody
+*** Currently the library has been tested with Tomcat 4.1 and 5.5. If anybody
 finds that it does or does not work with any other container please let me know.
 
 
-2. The JAAS LoginModule depends on the container using the same single thread to
-run from the start of a filter chain to the end of it. If this is not the case
-then JAAS will not work. This does however seem to be the case, at least with
-the versions of Tomcat it has been tested with. If you have a more elegant
+*** The JAAS LoginModule depends on the container using the same single thread
+to run from the start of a filter chain to the end of it. If this is not the
+case then JAAS will not work. This does however seem to be the case, at least
+with the versions of Tomcat it has been tested with. If you have a more elegant
 solution then please let me know.
 
 
-3. The ServletRequest/Response objects passed to the main doFilter() method
+*** The ServletRequest/Response objects passed to the main doFilter() method
 of the uk.ac.ox.webauth.Filter class must actually be
 HttpServletRequest/Response objects, as otherwise it is impossible to redirect
 the client browser. This is the case with the versions of Tomcat I have tested
@@ -74,7 +76,7 @@ it with, and I've seen others do it this way. If you know of another more
 elegant way of redirecting a client let me know.
 
 
-4. The code depends on the following libraries:
+*** The code depends on the following libraries:
 
   Bouncy Castle Provider for J2SE5 1.32
   Jakarta Commons Codec 1.3
@@ -88,23 +90,21 @@ or may not work. These libraries are currently included in both the source and
 binary distribution, as are their licenses.
 
 
-5. At the moment the only Kerberos encryption type supported is
-des3-cbc-sha1-kd. There is a partial des-cbc-crc decryption type included, but
-it has been disabled as it is not complete. Turning it into a des-cbc-md4/5
-should be pretty simple though, as it's only the checksum that is different.
+*** At the moment the only Kerberos encryption type supported is
+des3-cbc-sha1-kd and des-cbc-crc.
 
-It is quite simple to implement others. To do so have a look at the public
+It is reasonably easy to implement others. To do so have a look at the public
 methods in these files in the source distribution:
 
 src/uk/ac/ox/webauth/crypto/EType.java
-src/uk/ac/ox/webauth/crypto/Des3CbcSha1Kd.java
+src/uk/ac/ox/webauth/crypto/DesCbcCrc.java
 src/uk/ac/ox/webauth/asn1/EncryptedData.java
 
 If you do implement other encryption types then please submit them to me and
 I'll include them in a future release.
 
 
-6. Currently the library depends on a Java 1.5 implementation, as it uses 1.5
+*** Currently the library depends on a Java 1.5 implementation, as it uses 1.5
 version features such as generics and the new foreach loop, etc. However, this
 does not have to be a Sun Microsystems implementation as long as it supports
 all the 1.5 features used.
@@ -294,3 +294,21 @@ Kerberos credentials under any location, Webauth Java protected or not.
 Please also look at the AddFakeTGT configuration option, it is in most cases
 necessary to have that set to true when using JAAS and Kerberos proxy tickets.
 
+
+
+7. Changelog
+============
+
+1.2
+---
+Added changelog section to Readme and corrected index numbering.
+
+Changed des3-cbc-sha1-kd to throw an exception instead of just printing to
+stdout when an incorrect checksum was detected.
+
+Added des-cbc-crc encryption type.
+
+
+1.1
+---
+Initial public release.

@@ -33,6 +33,7 @@ import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERTaggedObject;
 import uk.ac.ox.webauth.crypto.Des3CbcSha1Kd;
+import uk.ac.ox.webauth.crypto.DesCbcCrc;
 import uk.ac.ox.webauth.crypto.EType;
 
 import static javax.crypto.Cipher.DECRYPT_MODE;
@@ -131,12 +132,10 @@ public class EncryptedData extends ASN1Encodable {
             throws IllegalArgumentException, IOException, GeneralSecurityException {
         EType etype = null;
         switch(type) {
-            /* Disabled since it's not complete.
             case 1:     // des-cbc-crc
-                etype = new DesCbcCrc(cipher, key);
+                etype = new DesCbcCrc(key);
                 System.out.println("Using des-cbc-crc etype.");
                 break;
-            */
             /* TODO: finish additional decryption methods
             case 3:     // des-cbc-md5
                 

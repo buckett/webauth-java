@@ -61,6 +61,7 @@ public class KeytabKeyLoader {
     public static void main(String[] args) throws Exception {
         KeytabKeyLoader kkl = new KeytabKeyLoader(args[0], args[1]);
         Subject sub = kkl.acquire();
+        System.out.println(sub.toString());
         for(KerberosKey k : sub.getPrivateCredentials(KerberosKey.class)) {
             // only grab a "Triple DES cbc mode with HMAC/sha1" type key
             if(k.getKeyType() == 16) {

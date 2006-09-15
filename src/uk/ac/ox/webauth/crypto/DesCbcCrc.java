@@ -20,9 +20,11 @@
  */
 package uk.ac.ox.webauth.crypto;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -48,10 +50,8 @@ import static javax.crypto.Cipher.ENCRYPT_MODE;
  */
 public class DesCbcCrc extends EType {
 
-
-    private SecretKey key;
-    
-    
+    private static final IvParameterSpec IV = new IvParameterSpec(new byte[]{0,0,0,0,0,0,0,0});
+    private static final SecureRandom rand = new SecureRandom();
     private static final int[] CRC_TABLE = {
         0x00000000, 0x77073096, 0xee0e612c, 0x990951ba,
         0x076dc419, 0x706af48f, 0xe963a535, 0x9e6495a3,
@@ -119,6 +119,8 @@ public class DesCbcCrc extends EType {
         0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
     };
 
+    private SecretKey key;
+    
 
     public DesCbcCrc(SecretKey key) {
         this.key = key;
@@ -140,13 +142,13 @@ public class DesCbcCrc extends EType {
         cipher.init(DECRYPT_MODE, key, iv);
         byte[] data = cipher.doFinal(cipherData);
         
-        // split out the CRC checksum (4 bytes)
+        // split out the CRC checksum (4 bytes) and check it
         byte[] checksum = new byte[4];
         System.arraycopy(data, cipher.getBlockSize(), checksum, 0, checksum.length);
         Arrays.fill(data, cipher.getBlockSize(), cipher.getBlockSize()+checksum.length, (byte)0);
-        
-        // do the CRC check
-        // TODO: complete this
+        if(!Arrays.equals(checksum, modifiedCRC32(data))) {
+            throw new GeneralSecurityException("Checksum failure.");
+        }
         
         // return an ASN.1 object
         InputStream is = new ByteArrayInputStream(data);
@@ -158,7 +160,40 @@ public class DesCbcCrc extends EType {
     
     
     @Override public byte[] encrypt(ASN1Encodable o) throws IOException, GeneralSecurityException {
-        return null;
+        // setup the Cipher so we can get the block size
+        Cipher cipher = Cipher.getInstance("DES/CBC/NoPadding");
+        cipher.init(ENCRYPT_MODE, key, IV);
+        int blockSize = cipher.getBlockSize();
+
+        // set up the byte array with data
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte[] confounder = new byte[blockSize];
+        synchronized(rand) { rand.nextBytes(confounder); }
+        baos.write(confounder);
+        
+        // write empty data in place of the checksum
+        byte[] checksum = new byte[blockSize];
+        baos.write(checksum);
+
+        // write the message sequence
+        baos.write(o.getDEREncoded());
+
+        // PKCS7 padding
+        byte[] pad = new byte[blockSize - (baos.size() % blockSize)];
+        Arrays.fill(pad, (byte)pad.length);
+        baos.write(pad);
+        byte[] data = baos.toByteArray();
+        
+        // calculate the checksum
+        checksum = modifiedCRC32(data);
+        System.arraycopy(checksum, 0, data, cipher.getBlockSize(), checksum.length);
+        
+        // now encrypt the data
+        baos = new ByteArrayOutputStream();
+        baos.write(cipher.doFinal(data));
+        baos.write(checksum);
+        
+        return baos.toByteArray();
     }
     
     

@@ -106,7 +106,9 @@ public class WebKDCServiceToken {
             }
             
             // request a webkdc token
-            byte[] krb_ap_req = new KrbApReq(ticket).toASN1Object().getEncoded();
+            KrbApReq k = new KrbApReq(ticket);
+            logger.debug("Sending the following KrbApReq:\n"+k.toString());
+            byte[] krb_ap_req = k.toASN1Object().getEncoded();
             WebauthGetTokensRequest wgtr = new WebauthGetTokensRequest(webAuthWebKdcURL, krb_ap_req);
             wgtr.tokenRequest();
             tokenData = wgtr.tokenData();

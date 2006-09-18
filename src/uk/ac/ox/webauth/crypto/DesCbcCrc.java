@@ -25,13 +25,17 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
+import java.security.spec.KeySpec;
 import java.util.Arrays;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESKeySpec;
 import javax.crypto.spec.IvParameterSpec;
 import org.apache.commons.codec.binary.Hex;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1InputStream;
+import uk.ac.ox.webauth.asn1.APOptions;
 
 import static javax.crypto.Cipher.DECRYPT_MODE;
 import static javax.crypto.Cipher.ENCRYPT_MODE;
@@ -138,8 +142,7 @@ public class DesCbcCrc extends EType {
     @Override public ASN1Encodable decrypt(byte[] cipherData) throws IOException, GeneralSecurityException {
         // decrypt the data
         Cipher cipher = Cipher.getInstance("DES/CBC/NoPadding");
-        IvParameterSpec iv = new IvParameterSpec(key.getEncoded());
-        cipher.init(DECRYPT_MODE, key, iv);
+        cipher.init(DECRYPT_MODE, key, IV);
         byte[] data = cipher.doFinal(cipherData);
         
         // split out the CRC checksum (4 bytes) and check it
@@ -172,7 +175,7 @@ public class DesCbcCrc extends EType {
         baos.write(confounder);
         
         // write empty data in place of the checksum
-        byte[] checksum = new byte[blockSize];
+        byte[] checksum = new byte[4];
         baos.write(checksum);
 
         // write the message sequence
@@ -188,12 +191,8 @@ public class DesCbcCrc extends EType {
         checksum = modifiedCRC32(data);
         System.arraycopy(checksum, 0, data, cipher.getBlockSize(), checksum.length);
         
-        // now encrypt the data
-        baos = new ByteArrayOutputStream();
-        baos.write(cipher.doFinal(data));
-        baos.write(checksum);
-        
-        return baos.toByteArray();
+        // now encrypt and return the data
+        return cipher.doFinal(data);
     }
     
     
@@ -231,6 +230,14 @@ public class DesCbcCrc extends EType {
         test_modifiedCRC32("80", "2083b8ed");
         test_modifiedCRC32("80000000", "3bb659ed");
         test_modifiedCRC32("00000001", "96300777");
+        SecretKeyFactory factory = SecretKeyFactory.getInstance("DES");
+        KeySpec spec = new DESKeySpec(new byte[8]);
+        SecretKey secretKey = factory.generateSecret(spec);
+        ASN1Encodable apo = new APOptions();
+        DesCbcCrc dcc = new DesCbcCrc(secretKey);
+        byte[] encrypted = dcc.encrypt(apo);
+        apo = dcc.decrypt(encrypted);
+        System.out.println("Encrypt-decrypt test successful.");
     }
     
     

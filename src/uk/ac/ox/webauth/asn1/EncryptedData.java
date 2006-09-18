@@ -134,7 +134,6 @@ public class EncryptedData extends ASN1Encodable {
         switch(type) {
             case 1:     // des-cbc-crc
                 etype = new DesCbcCrc(key);
-                System.out.println("Using des-cbc-crc etype.");
                 break;
             /* TODO: finish additional decryption methods
             case 3:     // des-cbc-md5
@@ -163,7 +162,7 @@ public class EncryptedData extends ASN1Encodable {
                     .append(" bytes.]");
         }
         else {
-            sb.append("Encrypted octet string. Decrypted data: ")
+            sb.append("Encrypted octet string, length: "+cipher.getOctets().length+". Decrypted data: ")
                     .append(decrypted.toString().replaceAll("\n", "\n    "));
         }
         sb.append("\n}");

@@ -38,6 +38,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.DecoderException;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1InputStream;
+import uk.ac.ox.webauth.asn1.APOptions;
 
 import static javax.crypto.Cipher.DECRYPT_MODE;
 import static javax.crypto.Cipher.ENCRYPT_MODE;
@@ -568,5 +569,14 @@ public class Des3CbcSha1Kd extends EType {
                    "00000001aa",
                    "f58efc6f83f93e55e695fd252cf8fe59f7d5ba37ec",
                    "f48ffd6e83f83e7354e694fd252cf83bfe58f7d5ba37ec5d");
+        
+        SecretKeyFactory factory = SecretKeyFactory.getInstance("DESede");
+        KeySpec spec = new DESedeKeySpec(new byte[24]);
+        SecretKey secretKey = factory.generateSecret(spec);
+        ASN1Encodable apo = new APOptions();
+        Des3CbcSha1Kd dcc = new Des3CbcSha1Kd(secretKey, 11);
+        byte[] encrypted = dcc.encrypt(apo);
+        apo = dcc.decrypt(encrypted);
+        System.out.println("Encrypt-decrypt test successful.");
     }
 }

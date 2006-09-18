@@ -308,6 +308,8 @@ stdout when an incorrect checksum was detected.
 
 Added des-cbc-crc encryption type.
 
+Added better error reporting if getting the service token fails.
+
 
 1.1
 ---

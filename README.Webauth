@@ -310,6 +310,8 @@ Added des-cbc-crc encryption type.
 
 Added better error reporting if getting the service token fails.
 
+Added some more self tests to encryption types.
+
 
 1.1
 ---

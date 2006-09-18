@@ -312,6 +312,8 @@ Added better error reporting if getting the service token fails.
 
 Added some more self tests to encryption types.
 
+Added some extra debugging info.
+
 
 1.1
 ---

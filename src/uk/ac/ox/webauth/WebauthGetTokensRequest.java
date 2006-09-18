@@ -123,6 +123,33 @@ public class WebauthGetTokensRequest {
         String request = getRequestMessage(krb_ap_req);
         WebKdcXmlRequest wkxr = new WebKdcXmlRequest(url);
         Document doc = wkxr.doPost(request);
+        
+        /* check if we actually got an error response and if so throw an exception
+        <errorResponse>
+          <!-- only if present in request -->
+          <messageId>{message-id}</messageId>
+          <errorCode>{numeric}<errorCode>
+          <errorMessage>{message}<errorMessage>
+        </errorResponse>
+        */
+        if("errorResponse".equalsIgnoreCase(doc.getFirstChild().getNodeName())) {
+            NodeList children = doc.getFirstChild().getChildNodes();
+            String errorCode = null;
+            String errorMessage = null;
+            for(int i = 0; i < children.getLength(); i++) {
+                Node n = children.item(i);
+                String nodeName = n.getNodeName();
+                if("errorCode".equalsIgnoreCase(nodeName)) {
+                    errorCode = n.getFirstChild().getNodeValue();
+                }
+                else if("errorMessage".equalsIgnoreCase(nodeName)) {
+                    errorMessage = n.getFirstChild().getNodeValue();
+                }
+            }
+            throw new IOException("Received error message when trying to request service token. Error code: '"
+                    +errorCode+"', error message: '"+errorMessage+"'");
+        }
+        
         parseResponse(doc);
     }
     
@@ -161,7 +188,6 @@ public class WebauthGetTokensRequest {
         </getTokensResponse>
         */
         Node nToken = doc.getDocumentElement().getFirstChild().getFirstChild();
-        // TODO: need better error handling here, if something goes wrong the nodename is 'errorCode'
         if(!"token".equals(nToken.getNodeName())) {
             throw new IOException("XML response is not in expected format, element name is '"
                 +nToken.getNodeName()+"', was expecting 'token'.");

@@ -54,7 +54,6 @@ import static javax.crypto.Cipher.ENCRYPT_MODE;
  */
 public class DesCbcCrc extends EType {
 
-    private static final IvParameterSpec IV = new IvParameterSpec(new byte[]{0,0,0,0,0,0,0,0});
     private static final SecureRandom rand = new SecureRandom();
     private static final int[] CRC_TABLE = {
         0x00000000, 0x77073096, 0xee0e612c, 0x990951ba,
@@ -142,7 +141,8 @@ public class DesCbcCrc extends EType {
     @Override public ASN1Encodable decrypt(byte[] cipherData) throws IOException, GeneralSecurityException {
         // decrypt the data
         Cipher cipher = Cipher.getInstance("DES/CBC/NoPadding");
-        cipher.init(DECRYPT_MODE, key, IV);
+        IvParameterSpec iv = new IvParameterSpec(key.getEncoded());
+        cipher.init(DECRYPT_MODE, key, iv);
         byte[] data = cipher.doFinal(cipherData);
         
         // split out the CRC checksum (4 bytes) and check it
@@ -165,7 +165,8 @@ public class DesCbcCrc extends EType {
     @Override public byte[] encrypt(ASN1Encodable o) throws IOException, GeneralSecurityException {
         // setup the Cipher so we can get the block size
         Cipher cipher = Cipher.getInstance("DES/CBC/NoPadding");
-        cipher.init(ENCRYPT_MODE, key, IV);
+        IvParameterSpec iv = new IvParameterSpec(key.getEncoded());
+        cipher.init(ENCRYPT_MODE, key, iv);
         int blockSize = cipher.getBlockSize();
 
         // set up the byte array with data

@@ -89,6 +89,10 @@ public class LogoutFilter implements Filter {
             logger.debug("WebAuth Logout Ok.");
         }
         
+        httpResponse.setHeader("Expires", "0");
+        httpResponse.setHeader("Pragma", "no-cache");
+        httpResponse.setHeader("Cache-Control", "no-cache");
+        
         chain.doFilter(httpRequest, httpResponse);
     }
 

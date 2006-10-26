@@ -39,7 +39,7 @@ public class LogoutFilter implements Filter {
             throws IOException, ServletException {
         
         if (!(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse))
-            throw new ServletException("Filter only works with HTTP");
+            throw new ServletException("Filter only works with HTTP.");
         
         HttpServletRequest httpRequest = (HttpServletRequest)request;
         HttpServletResponse httpResponse = (HttpServletResponse)response;
@@ -49,18 +49,21 @@ public class LogoutFilter implements Filter {
         }
         
         boolean foundCookies = false;
-        for (Cookie cookie : httpRequest.getCookies()) {
-            if (cookie.getName().startsWith("webauth")) {
-                cookie.setMaxAge(0);
-                cookie.setValue("");
-                cookie.setSecure(true);
-                cookie.setPath("/");
-                httpResponse.addCookie(cookie);
-                foundCookies = true;
+        Cookie[] cookies = httpRequest.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().startsWith("webauth")) {
+                    cookie.setMaxAge(0);
+                    cookie.setValue("");
+                    cookie.setSecure(true);
+                    cookie.setPath("/");
+                    httpResponse.addCookie(cookie);
+                    foundCookies = true;
+                }
             }
         }
         if (!foundCookies) {
-            logger.error("WebAuth Logout Failed. No cookies found");
+            logger.error("WebAuth Logout Failed. No cookies found.");
         }
         else {
             logger.debug("WebAuth Logout Ok.");

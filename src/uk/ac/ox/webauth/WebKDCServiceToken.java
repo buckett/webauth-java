@@ -21,6 +21,8 @@
 package uk.ac.ox.webauth;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.security.cert.CertPathValidatorException;
+
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.security.auth.kerberos.KerberosTicket;
@@ -125,9 +127,16 @@ public class WebKDCServiceToken {
                         +webAuthServicePrincipal+".");
             }
         }
-        catch(IOException ioe) { throw new ServletException("Could not refresh the WebKDC service token.", ioe); }
+        catch(IOException ioe) {
+            for( Throwable cause = ioe.getCause(); cause != null; cause = cause.getCause() ) {
+                if (cause instanceof CertPathValidatorException) {
+                    throw new ServletException("Missing Certificate: "+cause.getMessage(), ioe);
+                }
+            }
+            throw new ServletException("Could not refresh the WebKDC service token: "+ioe.getMessage(), ioe);
+        }
         catch(GeneralSecurityException gse) {
-            throw new ServletException("Could not refresh the WebKDC service token.", gse);
+            throw new ServletException("Could not refresh the WebKDC service token: "+gse.getMessage(), gse);
         }
     }
     

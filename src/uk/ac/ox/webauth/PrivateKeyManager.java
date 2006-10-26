@@ -261,9 +261,10 @@ public class PrivateKeyManager {
      */
     private synchronized void loadAndParse(File keyring) throws IOException, ServletException {
         BufferedReader in = new BufferedReader(new FileReader(keyring));
-        String[] keyData = in.readLine().split("(;|=)");
+        String line = in.readLine();
+        String[] keyData = (line == null)?new String[0]:line.split("(;|=)");
         in.close();
-        int n = -1;
+        int n = 0;
         int va = -1;
         int ct = -1;
         int kt = -1;

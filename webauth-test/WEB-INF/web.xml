@@ -38,14 +38,7 @@
     <init-param>
       <param-name>ProxyCredentials</param-name>
       <param-value>
-        krb5 imap/imap208.herald.ox.ac.uk@OX.AC.UK,
-        krb5 imap/imap209.herald.ox.ac.uk@OX.AC.UK,
-        krb5 imap/imap210.herald.ox.ac.uk@OX.AC.UK,
-        krb5 imap/imap211.herald.ox.ac.uk@OX.AC.UK,
-        krb5 imap/imap212.herald.ox.ac.uk@OX.AC.UK,
-        krb5 imap/imap213.herald.ox.ac.uk@OX.AC.UK,
-        krb5 imap/imap214.herald.ox.ac.uk@OX.AC.UK,
-        krb5 imap/imap215.herald.ox.ac.uk@OX.AC.UK
+        krb5 imap/imapserver.example.com@EXAMPLE.COM
       </param-value>
     </init-param>
     <init-param>

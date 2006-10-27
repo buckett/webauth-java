@@ -14,7 +14,8 @@
     <filter-class>uk.ac.ox.webauth.Filter</filter-class>
     <init-param>
       <param-name>ConfigFile</param-name>
-      <param-value>/usr/local/tomcat/conf/webauth.properties</param-value>
+      <!-- You should modify the path below. -->
+      <param-value>/etc/tomcat/webauth.properties</param-value>
     </init-param>
   </filter>
 
@@ -27,7 +28,8 @@
     </init-param>
     <init-param>
       <param-name>ConfigFile</param-name>
-      <param-value>/usr/local/tomcat/conf/webauth.properties</param-value>
+      <!-- You should modify the path below. -->
+      <param-value>/etc/tomcat/webauth.properties</param-value>
     </init-param>
   </filter>
   
@@ -43,7 +45,7 @@
     </init-param>
     <init-param>
       <param-name>ConfigFile</param-name>
-      <param-value>/usr/local/tomcat/conf/webauth.properties</param-value>
+      <param-value>/etc/tomcat/webauth.properties</param-value>
     </init-param>
   </filter>
   -->

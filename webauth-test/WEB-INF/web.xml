@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+<!--
+  $HeadURL$
+  $LastChangedRevision$
+  $LastChangedDate$
+  $LastChangedBy$
+-->
+
+<web-app>
+
+  <filter>
+    <filter-name>Webauth Filter</filter-name>
+    <filter-class>uk.ac.ox.webauth.Filter</filter-class>
+    <init-param>
+      <param-name>ConfigFile</param-name>
+      <param-value>/usr/local/tomcat/conf/webauth.properties</param-value>
+    </init-param>
+  </filter>
+
+  <filter>
+    <filter-name>Webauth NoJAAS Filter</filter-name>
+    <filter-class>uk.ac.ox.webauth.Filter</filter-class>
+    <init-param>
+      <param-name>UseJAAS</param-name>
+      <param-value>false</param-value>
+    </init-param>
+    <init-param>
+      <param-name>ConfigFile</param-name>
+      <param-value>/usr/local/tomcat/conf/webauth.properties</param-value>
+    </init-param>
+  </filter>
+  
+  <!--
+  <filter>
+    <filter-name>Webauth Proxy Credentials Filter</filter-name>
+    <filter-class>uk.ac.ox.webauth.Filter</filter-class>
+    <init-param>
+      <param-name>ProxyCredentials</param-name>
+      <param-value>
+        krb5 imap/imap208.herald.ox.ac.uk@OX.AC.UK,
+        krb5 imap/imap209.herald.ox.ac.uk@OX.AC.UK,
+        krb5 imap/imap210.herald.ox.ac.uk@OX.AC.UK,
+        krb5 imap/imap211.herald.ox.ac.uk@OX.AC.UK,
+        krb5 imap/imap212.herald.ox.ac.uk@OX.AC.UK,
+        krb5 imap/imap213.herald.ox.ac.uk@OX.AC.UK,
+        krb5 imap/imap214.herald.ox.ac.uk@OX.AC.UK,
+        krb5 imap/imap215.herald.ox.ac.uk@OX.AC.UK
+      </param-value>
+    </init-param>
+    <init-param>
+      <param-name>ConfigFile</param-name>
+      <param-value>/usr/local/tomcat/conf/webauth.properties</param-value>
+    </init-param>
+  </filter>
+  -->
+   
+  <filter>
+    <filter-name>Webauth Logout Filter</filter-name>
+    <filter-class>uk.ac.ox.webauth.LogoutFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>Webauth Filter</filter-name>
+    <url-pattern>/standard/*</url-pattern>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>Webauth NoJAAS Filter</filter-name>
+    <url-pattern>/nojaas/*</url-pattern>
+  </filter-mapping>
+
+  <!--
+  <filter-mapping>
+    <filter-name>Webauth Proxy Credentials Filter</filter-name>
+    <url-pattern>/proxycreds/*</url-pattern>
+  </filter-mapping>
+  -->
+
+  <filter-mapping>
+    <filter-name>Webauth Logout Filter</filter-name>
+    <url-pattern>/logout/*</url-pattern>
+  </filter-mapping>
+
+  <servlet>
+    <servlet-name>WebauthInfoPage</servlet-name>
+    <jsp-file>/webauth_info.jsp</jsp-file>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>WebauthInfoPage</servlet-name>
+    <url-pattern>/*</url-pattern>
+  </servlet-mapping>
+
+</web-app>

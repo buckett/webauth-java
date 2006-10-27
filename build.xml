@@ -35,8 +35,11 @@
   <property file="build.properties"/>
 
   
-  <!-- NOTE: make sure to set this in a build.properties file. -->
-  <property name="deploy.dir" value="Set this in a build.properties file!"/>
+  <!-- NOTE: make sure to set this in a build.properties file! -->
+  <!-- The deploy.dir should be set to most likely your Tomcat commons/lib directory path. -->
+  <property name="deploy.dir" value="Set_deploy.dir_in_a_build.properties_file"/>
+  <!-- The testapp.deploy.dir should be set to most likely your Tomcat webapps directory path. -->
+  <property name="testapp.deploy.dir" value="Set_testapp.deploy.dir_in_a_build.properties_file"/>
 
  
   <!-- Special variables that are important. -->
@@ -142,6 +145,16 @@
     <copy todir="${deploy.dir}">
       <fileset refid="app.jars"/>
       <fileset refid="libs.deploy"/>
+    </copy>
+  </target>
+
+
+  <!-- DEPLOY-TESTAPP -->
+  <target name="deploy-testapp"
+          depends="deploy"
+          description="Deploy testapp to Tomcat container">
+    <copy todir="${testapp.deploy.dir}/webauth-test">
+      <fileset dir="webauth-test"/>
     </copy>
   </target>
 

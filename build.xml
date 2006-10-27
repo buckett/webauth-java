@@ -172,6 +172,7 @@
           description="Create binary distribution">
     <jar jarfile="${dist.dir}/${dist.bin.jar}">
       <fileset dir="lib" excludes="servlet*"/>
+      <zipfileset dir="webauth-test" prefix="webauth-test"/>
       <fileset file="${dist.dir}/${app.jar}"/>
       <fileset file="LICENSE"/>
       <fileset file="README.Webauth"/>
@@ -189,11 +190,15 @@
     <copy todir="${dist.dir}/tmp/${app.filename}/${src.dir}">
       <fileset dir="${src.dir}"/>
     </copy>
+    <copy todir="${dist.dir}/tmp/${app.filename}/webauth-test">
+      <fileset dir="webauth-test"/>
+    </copy>
     <copy todir="${dist.dir}/tmp/${app.filename}">
       <fileset file="build.xml"/>
       <fileset file="LICENSE"/>
       <fileset file="README.Webauth"/>
     </copy>
+    
     <jar jarfile="${dist.dir}/${dist.src.jar}"
          basedir="${dist.dir}/tmp"/>
     <delete dir="${dist.dir}/tmp"/>

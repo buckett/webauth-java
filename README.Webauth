@@ -14,8 +14,9 @@ Contents
 4. Recommendations
 5. Configuration
 6. JAAS
-7. Logout
-8. Changelog
+7. Using the test webapp
+8. Logout
+9. Changelog
 
 
 
@@ -297,7 +298,24 @@ necessary to have that set to true when using JAAS and Kerberos proxy tickets.
 
 
 
-7. Logout
+7. Using the test webapp
+========================
+
+The src and bin distribution files contain a webauth-test webapp that can be
+used to confirm that your WebAuth Java installation is working properly.
+Configure your container as described above, deploy the webauth-test webapp to
+the container, and then use URLs simillar to this to test it:
+
+https://your.site.here/webauth-test/standard/
+https://your.site.here/webauth-test/nojaas/
+https://your.site.here/webauth-test/logout/
+
+The webapp web.xml also includes a commented out filter for obtaining proxy
+credentials, but it needs to be customised for your site.
+
+
+
+8. Logout
 =========
 
 A logout filter is avaliable. Note that the regular WebAuth caveats about
@@ -323,7 +341,7 @@ WebKDC where the WebAuth cookies scoped to the WebKDC server should be removed.
 
 
 
-8. Changelog
+9. Changelog
 ============
 
 1.3
@@ -334,6 +352,9 @@ WebKDC where the WebAuth cookies scoped to the WebKDC server should be removed.
 
 (Matthew Buckett) Give more useful debug info when missing SSL certificate for
 the WebAuth server.
+
+Added a test webapp that can be used to ensure that the webapp configuration is
+working.
 
 
 1.2

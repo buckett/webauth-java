@@ -63,7 +63,7 @@ public class Filter implements javax.servlet.Filter {
     
     
     public void init(FilterConfig filterConfig) throws ServletException {
-        config = new FilterConfigWrapper(filterConfig);
+        config = ConfigFactory.getConfig(filterConfig);
         logger = new LogWrapper(config);
         privateKeyManager();
         serviceToken();

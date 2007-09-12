@@ -59,36 +59,24 @@ public class FilterConfigWrapper implements FilterConfig {
      * Initialise the config.
      * @param   config  The FilterConfig to 'wrap'.
      */
-    public FilterConfigWrapper(FilterConfig config) throws ServletException {
+    public FilterConfigWrapper(FilterConfig config, String file) throws ServletException {
         this.config = config;
-        String confFile = config.getInitParameter("ConfigFile");
-        if(confFile != null) {
-            Properties props = new Properties();
-            try { props.load(new BufferedInputStream(new FileInputStream(confFile))); }
-            catch(IOException ioe) {
-                throw new ServletException("There was a problem reading the Webauth configuration file '"
-                        +confFile+"'.", ioe);
-            }
-            Enumeration keys = props.propertyNames();
-            while(keys.hasMoreElements()) {
-                String key = (String)keys.nextElement();
-                options.put(key, (String)props.getProperty(key));
-            }
-        }
-        Enumeration keys = config.getInitParameterNames();
-        while(keys.hasMoreElements()) {
-            String key = (String)keys.nextElement();
-            options.put(key, config.getInitParameter(key));
+
+        Properties props = new Properties();
+        try { props.load(new BufferedInputStream(new FileInputStream(file))); }
+        catch(IOException ioe) {
+            throw new ServletException("There was a problem reading the Webauth configuration file '"
+                +file+"'.", ioe);
         }
         
-        boolean debug = Boolean.parseBoolean(options.get("WebAuthDebug"));
-        if(debug) {
-            ServletContext context = config.getServletContext();
-            String prefix = "DEBUG: "+config.getFilterName()+": ";
-            context.log(prefix+"Filter configuration options:");
-            for(String key : options.keySet()) {
-                context.log(prefix+"    "+key+": "+options.get(key));
-            }
+        for(Enumeration keys = props.propertyNames(); keys.hasMoreElements();) {
+            String key = (String)keys.nextElement();
+            options.put(key, (String)props.getProperty(key));
+        }
+        
+        for(Enumeration keys = props.propertyNames();keys.hasMoreElements();) {
+            String key = (String)keys.nextElement();
+            options.put(key, config.getInitParameter(key));
         }
     }
     

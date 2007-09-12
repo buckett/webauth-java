@@ -17,10 +17,10 @@
 
 <p>
 <b>Test pages:</b><br/>
-<a href="../standard/">Standard</a><br/>
-<a href="../nojaas/">No JAAS</a><br/>
-<a href="../logout/">Logout</a><br/>
-<a href="../proxy/">Proxy credentials (may not be configured)</a><br/>
+<a href="<% out.print(request.getContextPath()); %>/standard/">Standard</a><br/>
+<a href="<% out.print(request.getContextPath()); %>/nojaas/">No JAAS</a><br/>
+<a href="<% out.print(request.getContextPath()); %>/logout/">Logout</a><br/>
+<a href="<% out.print(request.getContextPath()); %>/proxy/">Proxy credentials (may not be configured)</a><br/>
 </p>
 
 <p><b>AuthType:</b> <%= request.getAuthType() %><br/>

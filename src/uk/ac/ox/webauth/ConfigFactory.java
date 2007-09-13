@@ -20,6 +20,7 @@
  */
 package uk.ac.ox.webauth;
 
+import java.lang.reflect.Constructor;
 import java.util.Enumeration;
 
 import javax.servlet.FilterConfig;
@@ -52,23 +53,11 @@ public class ConfigFactory
         if (confClass != null) {
             try
             {
-                newConfig  = (FilterConfig)Class.forName(confClass).newInstance();
+                Constructor constructor = Class.forName(confClass).getConstructor(FilterConfig.class);
+                newConfig = (FilterConfig)constructor.newInstance(config);
             }
-            catch (ClassNotFoundException e)
-            {
-                context.log("ConfigClass parameter, class not found ("+ confClass+")", e);
-            }
-            catch (InstantiationException e)
-            {
-                context.log("ConfigClass parameter, failed to create ("+ confClass+")", e);
-            }
-            catch (IllegalAccessException e)
-            {
-                context.log("ConfigClass parameter, illegal access ("+ confClass+")", e);
-            }
-            catch (ClassCastException e)
-            {
-                context.log("ConfigClass parameter, doesn't implement FilterConfig ("+ confClass+")", e);
+            catch (Exception e) {
+                context.log("Failed to load ConfigClass parameter ("+ confClass+ ")", e);
             }
         } else {
             String confFile = config.getInitParameter("ConfigFile");

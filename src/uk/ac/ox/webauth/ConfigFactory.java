@@ -47,7 +47,7 @@ public class ConfigFactory
     {
         FilterConfig newConfig = config;
 
-        ServletContext context = newConfig.getServletContext();
+        ServletContext context = config.getServletContext();
        
         String confClass = config.getInitParameter("ConfigClass");
         if (confClass != null) {
@@ -67,7 +67,7 @@ public class ConfigFactory
             }
         }
         
-        boolean debug = Boolean.parseBoolean(config.getInitParameter("WebAuthDebug"));
+        boolean debug = Boolean.parseBoolean(newConfig.getInitParameter("WebAuthDebug"));
         if(debug) {
             String prefix = "DEBUG: "+newConfig.getFilterName()+": ";
             context.log(prefix+"Filter newConfiguration options:");

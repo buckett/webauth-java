@@ -213,6 +213,12 @@ ConfigFile              (default none)
     all Webauth Java filters. Any properties set in the file can be overridden
     with specific init parameters given to the filter by the container.
 
+ConfigClass             (default none)
+    This tells the filter to attempt to create an instance of this class and use
+    it for it's configuration. The class must implement the
+    javax.servlet.FilterConfig interface and must have a constructor of
+    FilterConfig(FilterConfig).
+
 ProxyCredentials        (default none)
     This works similar to the mod_webauth WebAuthCred directive, but since it
     wasn't an exact fit a new directive name was used for the Webauth Java
@@ -363,6 +369,10 @@ WebKDC where the WebAuth cookies scoped to the WebKDC server should be removed.
 
 9. Changelog
 ============
+
+1.3.2
+-----
+Added support for loading configuration from class.
 
 1.3.1
 -----

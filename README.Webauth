@@ -40,7 +40,8 @@ first install mod_webauth for Apache2 and get that working, to ensure that they
 definitely have a working setup. The keytab, keyring and many of the
 configuration options for Webauth Java are then the same.
 
-This code was written as part of the SPIE project (http://spie.oucs.ox.ac.uk/)
+This code was written as part of the SPIE project
+(http://www.oucs.ox.ac.uk/rts/spie/)
 at the Oxford University Computing Services department, University of Oxford,
 UK. The source is licensed under the LGPL license, and (C) University of
 Oxford. Redistributed libraries retain their own copyright and licenses.
@@ -51,8 +52,8 @@ a user has been authenticated and is passed through to the target location their
 username can be retrieved by using the HttpServletRequest.getRemoteUser()
 method. The filter can also be configured to support JAAS authentication.
 
-Any questions, feature requests, bugs, patches, or comments can be sent to the
-main author Mats Henrikson at mats@sysdev.oucs.ox.ac.uk.
+Any questions, feature requests, bugs, patches, or comments can be sent to
+<sysdev@oucs.ox.ac.uk> who will provide best-efforts support.
 
 
 

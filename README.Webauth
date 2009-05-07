@@ -244,6 +244,13 @@ UseJAAS                 (default false)
     This must be set to true if JAAS is used to authenticate the user, or
     obtaining proxy credentials. Please make sure the read the JAAS section
     further down in this document.
+    
+WebAuthKeytabRefresh    (default false)
+    This controls if the keytab file should be reloaded each time it is needed.
+    If you are attempting to get your webauth setup working it might be handy to
+    set this to true. The other common situation when this should be true is if 
+    there is another keytab loaded by the JVM, as only one keytab remains loaded
+    at once.
 
 The following options do the same as for mod_webauth, please read the
 documentation at http://webauth.stanford.edu/manual/mod/mod_webauth.html to find

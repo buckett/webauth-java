@@ -58,6 +58,8 @@ public class WebKDCServiceToken {
     private String webAuthWebKdcPrincipal;
     /** The WebKDC request URL to post XML requests to. */
     private String webAuthWebKdcURL;
+    /** Should we reload the keytab each time. */
+    private boolean webAuthKeytabRefresh;
     /** The ServletContext to log to. */
     private LogWrapper logger;
 
@@ -86,6 +88,7 @@ public class WebKDCServiceToken {
         this.webAuthKeytab = config.getInitParameter("WebAuthKeytab");
         this.webAuthWebKdcPrincipal = config.getInitParameter("WebAuthWebKdcPrincipal");
         this.webAuthWebKdcURL = config.getInitParameter("WebAuthWebKdcURL");
+        this.webAuthKeytabRefresh = Boolean.parseBoolean(config.getInitParameter("WebAuthKeytabrefresh"));
     }
     
     
@@ -94,7 +97,7 @@ public class WebKDCServiceToken {
         valid = false;
         try {
             // load the service key from the keytab
-            KeytabKeyLoader kkl = new KeytabKeyLoader(webAuthServicePrincipal, webAuthKeytab);
+            KeytabKeyLoader kkl = new KeytabKeyLoader(webAuthServicePrincipal, webAuthKeytab, webAuthKeytabRefresh);
             Subject sub = kkl.acquire();
             
             // get a service ticket

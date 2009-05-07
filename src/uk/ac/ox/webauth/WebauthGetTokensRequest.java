@@ -76,7 +76,7 @@ public class WebauthGetTokensRequest {
     public static void main(String[] args) throws Exception {
         // get some keys to decrypt with
         long start = System.currentTimeMillis();
-        KeytabKeyLoader kkl = new KeytabKeyLoader(args[0], args[1]);
+        KeytabKeyLoader kkl = new KeytabKeyLoader(args[0], args[1], false);
         Subject sub = kkl.acquire();
         long stop = System.currentTimeMillis();
         System.out.println("Grabbing private key took "+(stop-start)+" milliseconds.");

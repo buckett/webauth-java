@@ -51,6 +51,8 @@ public class KeytabKeyLoader {
     private String principal;
     /** The keytab where to look for the key for the principal. */
     private File keytab;
+    /** Refresh keytab every time. */
+    private boolean keytabRefresh;
     
     
     /**
@@ -59,7 +61,7 @@ public class KeytabKeyLoader {
      * @throws  Exception   when something goes wrong.
      */
     public static void main(String[] args) throws Exception {
-        KeytabKeyLoader kkl = new KeytabKeyLoader(args[0], args[1]);
+        KeytabKeyLoader kkl = new KeytabKeyLoader(args[0], args[1], false);
         Subject sub = kkl.acquire();
         System.out.println(sub.toString());
         for(KerberosKey k : sub.getPrivateCredentials(KerberosKey.class)) {
@@ -80,10 +82,12 @@ public class KeytabKeyLoader {
      * principal to grab a key for.
      * @param   princ       The principal to grab a key for.
      * @param   ktb         The filename of the keytab to load the key from.
+     * @param webAuthKeytabRefresh 
      */
-    public KeytabKeyLoader(String princ, String ktb) {
+    public KeytabKeyLoader(String princ, String ktb, boolean keytabRefresh) {
          this.principal = princ;
          this.keytab = new File(ktb);
+         this.keytabRefresh = keytabRefresh;
     }
     
     
@@ -99,7 +103,7 @@ public class KeytabKeyLoader {
         if(!keytab.canRead()) { throw new IOException("The keytab '"+keytab.getPath()+"' is not readable."); }
         
         LoginContext lc = null;
-        lc = new LoginContext("__Webauth-Keytab__", null, null, new StaticConfiguration(principal, keytab));
+        lc = new LoginContext("__Webauth-Keytab__", null, null, new StaticConfiguration(principal, keytab, keytabRefresh));
         lc.login();
         return lc.getSubject();
     }
@@ -117,7 +121,7 @@ public class KeytabKeyLoader {
          * @param   princ   The principal to load a key for.
          * @param   keytab  The keytab file to look in.
          */
-        public StaticConfiguration(String princ, File keytab) {
+        public StaticConfiguration(String princ, File keytab, boolean refreshKeytab) {
             Map <String,String> c = new HashMap <String,String> ();
             c.put("keyTab", keytab.getPath());
             c.put("principal", princ);
@@ -126,6 +130,7 @@ public class KeytabKeyLoader {
             c.put("useKeyTab", "true");
             c.put("storeKey", "true");
             c.put("doNotPrompt", "true");
+            c.put("refreshKrb5Config", Boolean.valueOf(refreshKeytab).toString());
             config = Collections.unmodifiableMap(c);
         }
         

@@ -41,22 +41,22 @@ import org.apache.commons.codec.DecoderException;
 public class WebauthKey implements Comparable<WebauthKey> {
     
     
-    /** Valid after unix timestamp, seconds since the epoch. */
+    /** @return Valid after unix timestamp, seconds since the epoch. */
     public int va() { return va; }
     private int va;
-    /** Created time unix timestamp, seconds since the epoch. */
+    /** @return Created time unix timestamp, seconds since the epoch. */
     public int ct() { return ct; }
     private int ct;
-    /** Key type. 1: AES. */
+    /** @return Key type (e.g. 1: AES). */
     public int kt() { return kt; }
     private int kt;
-    /** Key number in the keyring file. */
+    /** @return Key number in the keyring file. */
     public int kn() { return kn; }
     private int kn;
-    /** Base64 encoded key data. */
+    /** @return Base64 encoded key data. */
     public String kd() { return kd; }
     private String kd;
-    /** The SecretKey built from the data. */
+    /** @return The SecretKey built from the data. */
     public SecretKey key() { return key; }
     private SecretKey key;
     

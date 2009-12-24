@@ -64,7 +64,7 @@ public class Token {
     private final Map <String,KeyValuePair> kv = new HashMap <String,KeyValuePair> ();
     /** A Stringifier to use to return a string representing this token. */
     private Stringifier stringifier;
-    /** If this is false then the token is not valid. */
+    /** @return false if the token is invalid. */
     public boolean valid() { return valid; }
     private boolean valid = false;
     
@@ -89,7 +89,7 @@ public class Token {
             /* US-ASCII should always exist. */
             uee.printStackTrace();
         }
-        // trick the compiler into not showing not initialised errors
+        // trick the compiler into not showing 'variable might not have been initialised' errors
         SEMI_COLON = semiColon;
         EQUALS = equals;
     }

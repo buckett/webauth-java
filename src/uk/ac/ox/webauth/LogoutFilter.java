@@ -52,7 +52,7 @@ public class LogoutFilter implements Filter {
 
     
     /**
-     * Attempt to log the user out of thier WebAuth session with the current
+     * Attempt to log the user out of their WebAuth session with the current
      * site. This is done by removing the cookies.
      */
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)

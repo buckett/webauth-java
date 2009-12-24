@@ -58,21 +58,21 @@ public class WebKDCServiceToken {
     private String webAuthWebKdcPrincipal;
     /** The WebKDC request URL to post XML requests to. */
     private String webAuthWebKdcURL;
-    /** Should we reload the keytab each time. */
+    /** Whether we reload the keytab each time. */
     private boolean webAuthKeytabRefresh;
     /** The ServletContext to log to. */
     private LogWrapper logger;
 
-    /** The tokenData string. */
+    /** @return The tokenData string. */
     public String tokenData() { return tokenData; }
     private String tokenData;
-    /** The sessionKey. */
+    /** @return The sessionKey. */
     public SecretKey sessionKey() { return sessionKey; }
     private SecretKey sessionKey;
-    /** The time the session key expires in seconds since the epoch. */
+    /** @return The time the session key expires in seconds since the epoch. */
     public int expires() { return expires; }
     private int expires;
-    /** Is this a valid token, did the last refresh succeed? */
+    /** @return Whether this is a valid token, i.e. did the last refresh succeed? */
     public boolean valid() { return valid; }
     private boolean valid = false;
     
@@ -88,7 +88,7 @@ public class WebKDCServiceToken {
         this.webAuthKeytab = config.getInitParameter("WebAuthKeytab");
         this.webAuthWebKdcPrincipal = config.getInitParameter("WebAuthWebKdcPrincipal");
         this.webAuthWebKdcURL = config.getInitParameter("WebAuthWebKdcURL");
-        this.webAuthKeytabRefresh = Boolean.parseBoolean(config.getInitParameter("WebAuthKeytabrefresh"));
+        this.webAuthKeytabRefresh = Boolean.parseBoolean(config.getInitParameter("WebAuthKeytabRefresh"));
     }
     
     

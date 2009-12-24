@@ -173,8 +173,8 @@ public class WebauthGetTokensRequest {
     /**
      * Parse the response from the token request.
      * @param   doc The response document.
-     * @throws  ParserConfigurationException if there is a problem with the parser.
-     * @throws  SAXException if there are problems with the XML.
+     * @throws  javax.xml.parsers.ParserConfigurationException if there is a problem with the parser.
+     * @throws  org.xml.sax.SAXException if there are problems with the XML.
      */
     private void parseResponse(Document doc) throws IOException {
         /*

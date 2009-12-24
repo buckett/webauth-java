@@ -56,7 +56,7 @@ public class PrivateKeyManager {
     private File keyring;
     /** The time the keyring was last modified. */
     private long lastModified;
-    /** When did we last check the keyring for changes. */
+    /** When we last checked the keyring for changes. */
     private long lastChecked;
     /** Timestamp when we last checked if a key should be removed or added. */
     private long updateChecked;
@@ -93,6 +93,7 @@ public class PrivateKeyManager {
      * @param   keyring         The location of the Webauth keyring.
      * @param   createKeys      Should the manager create new keys?
      * @param   removeKeys      Should the manager remove old keys?
+     * @param   logger          The log object, for logging to.
      * @throws  ServletException    if it wasn't possible to load the keyring.
      */
     public PrivateKeyManager(String keyring, boolean createKeys, boolean removeKeys, LogWrapper logger)
@@ -168,7 +169,7 @@ public class PrivateKeyManager {
                             modified = true;
                             if(logger.debug()) {
                                  logger.debug("Removed key "+key.kn()+" from keyring "+keyring.getPath()
-                                        +" as it had passed it's max age of: "
+                                        +" as it had passed its max age of: "
                                         +new Date((key.va()+KEY_REMOVE_AGE)*1000L)+".");
                             }
                         }

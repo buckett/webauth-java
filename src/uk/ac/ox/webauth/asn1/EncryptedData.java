@@ -36,9 +36,6 @@ import uk.ac.ox.webauth.crypto.Des3CbcSha1Kd;
 import uk.ac.ox.webauth.crypto.DesCbcCrc;
 import uk.ac.ox.webauth.crypto.EType;
 
-import static javax.crypto.Cipher.DECRYPT_MODE;
-import static javax.crypto.Cipher.ENCRYPT_MODE;
-
 
 /**
  * Java object definition of the following ASN.1 structure:

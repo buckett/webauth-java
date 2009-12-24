@@ -63,10 +63,10 @@ public class APOptions extends ASN1Encodable {
     public APOptions(DERBitString bits) {
         this.bits = bits;
         byte[] array = bits.getBytes();
-        reserved0 = (array[0] > 0) ? true : false;
-        use_session_key = (array[1] > 0) ? true : false;;
-        mutual_required = (array[2] > 0) ? true : false;;
-        reserved3 = (array[3] > 0) ? true : false;;
+        reserved0 = (array[0] > 0);
+        use_session_key = (array[1] > 0);
+        mutual_required = (array[2] > 0);
+        reserved3 = (array[3] > 0);
     }
     
     

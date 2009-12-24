@@ -41,18 +41,16 @@ import javax.servlet.ServletException;
  * @author     Matthew Buckett
  * @version    $LastChangedRevision$
  */
-public class ConfigFactory
-{
-    public static FilterConfig getConfig (FilterConfig config) throws ServletException
-    {
+public class ConfigFactory {
+
+    public static FilterConfig getConfig (FilterConfig config) throws ServletException {
         FilterConfig newConfig = config;
 
         ServletContext context = config.getServletContext();
        
         String confClass = config.getInitParameter("ConfigClass");
         if (confClass != null) {
-            try
-            {
+            try {
                 Constructor constructor = Class.forName(confClass).getConstructor(FilterConfig.class);
                 newConfig = (FilterConfig)constructor.newInstance(config);
             }

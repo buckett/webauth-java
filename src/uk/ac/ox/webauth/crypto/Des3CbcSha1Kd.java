@@ -336,7 +336,7 @@ public class Des3CbcSha1Kd extends EType {
      * 1's-complement addition (that is, with end-around carry) to yield
      * a n-bit result....
      * @param   in      The incoming bytes.
-     * @param   nBytesOut    The number of bits to fold the in bytes into.
+     * @param   nBitsOut    The number of bits to fold the in bytes into.
      * @return  The in bytes folded into a byte array that is nBytesOut bits wide.
      */
     private static byte[] nFold(byte[] in, int nBitsOut) {
@@ -348,7 +348,6 @@ public class Des3CbcSha1Kd extends EType {
         
         /* the code below is more readable if I make these bytes instead of bits */
         int nBytesIn = in.length;
-        int nBitsIn = nBytesIn * 8;
         int nBytesOut = nBitsOut/8;
     
         /* first compute lcm(n,k) */

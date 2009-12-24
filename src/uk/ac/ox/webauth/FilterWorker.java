@@ -144,7 +144,7 @@ public class FilterWorker {
                 setProxyCookie(webauthr, privateKey, response);
                 debug("Authenticated client.");
             }
-            else { debug("Recieved an invalid WEBAUTHR token."); }
+            else { debug("Received an invalid WEBAUTHR token."); }
             
             // do an extra redirect so that the WEBAUTH params are not visible in the URL
             if(username != null && Boolean.parseBoolean(config.getInitParameter("WebAuthExtraRedirect"))) {
@@ -221,7 +221,7 @@ public class FilterWorker {
      * by requesting them from the WebKDC. This method has been implemented in
      * the spirit of Webauth being able to support different cred types, even
      * though at the moment it only supports krb5 creds.
-     * @param   tickets     A List where all proxu credential tokens are to be placed.
+     * @param   tickets     A List where all proxy credential tokens are to be placed.
      * @param   privateKey  The key most likely needed to decrypt any cookies.
      * @return  Returns true if it is not necessary to redirect the user to get
      *          a proxy token.

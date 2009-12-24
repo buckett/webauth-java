@@ -49,12 +49,12 @@ public class KeytabKeyLoader {
     
     /** The principal whose key to acquire. */
     private String principal;
-    /** The keytab where to look for the key for the principal. */
+    /** The keytab in which to look for the principal's key. */
     private File keytab;
     /** Refresh keytab every time. */
     private boolean keytabRefresh;
-    
-    
+
+
     /**
      * Simple test method that tries to acquire a type 16 key from a given keytab.
      * @param   args    First principal and then the keytab to load a key from.
@@ -80,9 +80,9 @@ public class KeytabKeyLoader {
     /**
      * Initialise the prototype with the keytab filename and the
      * principal to grab a key for.
-     * @param   princ       The principal to grab a key for.
-     * @param   ktb         The filename of the keytab to load the key from.
-     * @param webAuthKeytabRefresh 
+     * @param   princ         The principal to grab a key for.
+     * @param   ktb           The filename of the keytab to load the key from.
+     * @param   keytabRefresh Whether to refresh the keytab before login.
      */
     public KeytabKeyLoader(String princ, String ktb, boolean keytabRefresh) {
          this.principal = princ;
@@ -118,8 +118,9 @@ public class KeytabKeyLoader {
         
         /**
          * Configure the options map.
-         * @param   princ   The principal to load a key for.
-         * @param   keytab  The keytab file to look in.
+         * @param   princ         The principal to load a key for.
+         * @param   keytab        The keytab file to use.
+         * @param   refreshKeytab Whether to refresh the keytab prior to login
          */
         public StaticConfiguration(String princ, File keytab, boolean refreshKeytab) {
             Map <String,String> c = new HashMap <String,String> ();

@@ -62,7 +62,7 @@ public class ServiceTicketGrabberHack implements PrivilegedExceptionAction {
         Oid krb5PrincipalNameType = new Oid("1.2.840.113554.1.2.2.1");
         // Identify who the client wishes to be
         GSSName userName = manager.createName(user, NT_USER_NAME);
-        // Identify the name of the server. This uses a Kerberos specific name format.
+        // Identify the name of the server. This uses a Kerberos-specific name format.
         GSSName serverName = manager.createName(service,  krb5PrincipalNameType);
         // Acquire credentials for the user
         GSSCredential userCreds = manager.createCredential(userName, GSSCredential.DEFAULT_LIFETIME, krb5Mechanism,

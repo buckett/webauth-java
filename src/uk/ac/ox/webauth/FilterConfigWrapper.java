@@ -71,10 +71,10 @@ public class FilterConfigWrapper implements FilterConfig {
         
         for(Enumeration keys = props.propertyNames(); keys.hasMoreElements();) {
             String key = (String)keys.nextElement();
-            options.put(key, (String)props.getProperty(key));
+            options.put(key, props.getProperty(key));
         }
         
-        for(Enumeration keys = props.propertyNames();keys.hasMoreElements();) {
+        for(Enumeration keys = config.getInitParameterNames(); keys.hasMoreElements();) {
             String key = (String)keys.nextElement();
             options.put(key, config.getInitParameter(key));
         }

@@ -177,6 +177,22 @@ AutoRemoveKeys=true
 AddFakeTGT=true
 UseJAAS=true
 
+If you have a non-SSL HTTP Connector defined in server.xml the following 
+security constraint will ensure all data will use an SSL HTTP Connector instead 
+(in server.xml you must have the SSL HTTP Connector defined and the redirectPort
+attribute on your non-SSL HTTP Connector defined for this to work). Add a 
+section like the following to your web.xml to use this feature:
+
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>all</web-resource-name>
+      <url-pattern>/*</url-pattern>
+    </web-resource-collection>
+    <user-data-constraint>
+      <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
+
 Currently, the Webauth Java filter only understands the following parameters:
 
 AddFakeTGT              (default false)
@@ -275,6 +291,11 @@ has read and write access to it, no other user should have any access!
 Also make sure that if you are using mod_webauth or another container with
 Webauth Java configured that only one out of all the services sharing the same
 keyring actually updates it.
+
+At the time of writing the Sun krb5 classes (included with the Sun Java
+distribution) do not support discovering KDCs using DNS, so KDCs must be
+explicitly defined in the Kerberos 5 configuration file krb5.conf (AKA
+krb5.ini on Windows platforms).
 
 
 
@@ -378,12 +399,22 @@ WebKDC where the WebAuth cookies scoped to the WebKDC server should be removed.
 9. Changelog
 ============
 
-1.3.3 (2008-09-24)
-Update contact address
+1.3.4
+-----
+Added optional refreshing of kerberos config.
+
+Improved documentation.
+
+
+1.3.3
+-----
+Update contact address.
+
 
 1.3.2
 -----
 Added support for loading configuration from class.
+
 
 1.3.1
 -----

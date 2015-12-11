@@ -85,7 +85,7 @@ public class IdTV extends Validator {
                 if(logger.debug()) { logger.debug("sad authenticator verified."); }
             }
             catch(GeneralSecurityException gse) {
-                if(logger.debug()) { logger.debug("sad authenticator validation failed."); }
+                if(logger.debug()) { logger.debug("sad authenticator validation failed.", gse); }
                 return false;
             }
             catch(IOException ioe) {

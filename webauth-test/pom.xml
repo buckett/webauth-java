@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>uk.ac.ox.oucs</groupId>
+	<artifactId>webauth-test</artifactId>
+	<version>1.3.5-SNAPSHOT</version>
+	<packaging>war</packaging>
+	<name>WebAuth Test</name>
+	<dependencies>
+		<dependency>
+			<groupId>uk.ac.ox.oucs</groupId>
+			<artifactId>webauth-java</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<!-- This allows you to run the plain test webapp quickly with mvn jetty:run
+			     use -Djetty.port=8081 if you need to change the port it listens on -->
+			<plugin>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>9.2.6.v20141205</version>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

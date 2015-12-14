@@ -15,7 +15,7 @@
     <init-param>
       <param-name>ConfigFile</param-name>
       <!-- You should modify the path below. -->
-      <param-value>/etc/tomcat/webauth.properties</param-value>
+      <param-value>webauth.properties</param-value>
     </init-param>
   </filter>
 
@@ -29,7 +29,7 @@
     <init-param>
       <param-name>ConfigFile</param-name>
       <!-- You should modify the path below. -->
-      <param-value>/etc/tomcat/webauth.properties</param-value>
+      <param-value>webauth.properties</param-value>
     </init-param>
   </filter>
   
